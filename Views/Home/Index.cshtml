@@ -1,0 +1,112 @@
+﻿@model BaseEntry
+@using FolderManagerApplication.Models
+
+@{
+    ViewData["Title"] = "Current Folder";
+}
+
+<h3>@ViewBag.currentFolder</h3>
+<div style="height:70vh;overflow:auto;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th colspan="2">Name</th>
+                <th>Size</th>
+                <th>Date</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        @foreach (var entry in ViewBag.entries)
+        {
+            <tr>
+                @if (@entry is FileEntry)
+                {
+                    <td class="left">@entry.Name</td>
+                    <td class="right">@entry.Extension</td>
+                    <td>@entry.Size</td>
+                }
+                else
+                {
+                    <td colspan="2">
+                        <a asp-controller("Home") asp-action("Index") asp-all-route-data='new Dictionary<string,string> { { "path", @entry.FullPath} } '>@entry.Name</a>
+                    </td>
+                    <td>@entry.NavigationButton</td>
+                }                
+                <td>@entry.DateTime.ToString("yyyy-MM-dd")</td>
+                <td>@entry.DateTime.ToString("hh:mm tt")</td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div class="wrap" align="center">
+    <div class="folder-div-wrap">
+        <div id="folder-div" style="display:none;">
+            <form asp-action="CreateFolder" asp-controller="Home">
+                <div class="form-group">
+                    <div class="form-group" hidden>
+                        <label asp-for="FullPath" class="label"></label>
+                        <input asp-for="FullPath" type="text" value="@ViewBag.currentFolder" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="label">Folder Name</label>
+                        <input asp-for="Name" placeholder="Enter name here" required />
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-custom" value="Create Folder" onclick="onClick()" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="slide-btn">
+            <input id="addFolderButton" type="submit" class="btn-add-folder" value="Add Folder" />
+        </div>
+    </div>
+
+    <div class="file-div-wrap">
+        <div id="file-div" style="display:none;">
+            <form asp-action="CreateTextFile" asp-controller="Home">
+                <div class="form-group">
+                    <div class="form-group" hidden>
+                        <label asp-for="FullPath"></label>
+                        <input asp-for="FullPath" type="text" value="@ViewBag.currentFolder" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="label">File Name</label>
+                        <input asp-for="Name" placeholder="Enter name here" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="fileText" class="label">File text</label>
+                        <textarea name="fileText" type="text" placeholder="Enter text here"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-custom" value="Create File" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="slide-btn">
+            <input id="addFileButton" type="submit" class="btn-add-file" value="Add File" />
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("addFolderButton").onclick = function () {
+        var text = document.getElementById("addFolderButton").value;
+        if (text === "Add Folder") {
+            document.getElementById("addFolderButton").value = "Cancel";
+        } else {
+            document.getElementById("addFolderButton").value = "Add Folder";
+        }
+    } 
+
+    document.getElementById("addFileButton").onclick = function () {
+        var text = document.getElementById("addFileButton").value;
+        if (text === "Add File") {
+            document.getElementById("addFileButton").value = "Cancel";
+        } else {
+            document.getElementById("addFileButton").value = "Add File";
+        }
+    } 
+</script>
